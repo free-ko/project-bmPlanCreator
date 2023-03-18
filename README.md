@@ -1,4 +1,4 @@
-# 사업 계획서 작성 솔루션 by Open AI
+# [사업 계획서 작성 솔루션](https://bmplancreator.vercel.app/) by Open AI
 
 ## 소개
 - Open AI를 통해 다양한 사업 계획서 샘플을 만들어 볼 수 있습니다.
