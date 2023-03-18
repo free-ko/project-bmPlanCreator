@@ -1,1 +1,2 @@
-# project-bmPlanCreator
+# 사업 계획서 작성 솔루션 by Open AI
+- Open AI를 통해, 사업 계획서를 작성해주는 기능 입니다.
