@@ -32,10 +32,10 @@ export const useBMPlanCreatorService = () => {
   const [answerByTurbo, setAnswerByTurbo] = useState("");
   const [answerByDavinci, setAnswerByDavinci] = useState("");
 
-  const getBMPlanByDavinci = (
+  const getBMPlanByDavinci = async (
     data: BmPlanCreatorServiceForm
-  ): Promise<string> => {
-    const response = fetch("api/davinci", {
+  ): Promise<{ result: string }> => {
+    const response = await fetch("api/davinci", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,13 +43,17 @@ export const useBMPlanCreatorService = () => {
       body: JSON.stringify(data),
     });
 
-    return response.then((res) => res.json());
+    if (!response.ok) {
+      throw new Error("서버 오류가 발생했습니다.");
+    }
+
+    return await response.json();
   };
 
   const getBMPlanByTurbo = async (
     data: BmPlanCreatorServiceForm
-  ): Promise<string> => {
-    const response = fetch("api/turbo", {
+  ): Promise<{ result: string }> => {
+    const response = await fetch("api/turbo", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -57,7 +61,11 @@ export const useBMPlanCreatorService = () => {
       body: JSON.stringify(data),
     });
 
-    return response.then((res) => res.json());
+    if (!response.ok) {
+      throw new Error("서버 오류가 발생했습니다.");
+    }
+
+    return response.json();
   };
 
   return {

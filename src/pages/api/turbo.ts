@@ -39,17 +39,18 @@ const getBMPlanByTurbo = async (
   return response.data.choices[0].message.content;
 };
 
+type ResultResponse = { result: string } | { message: string };
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<string>
+  res: NextApiResponse<ResultResponse>
 ) {
   try {
     const reqBody = req.body;
     const reply = await getBMPlanByTurbo(reqBody);
 
-    res.status(200).json(reply);
+    res.status(200).json({ result: reply });
   } catch (error) {
     console.error("에러가 발생 했습니다. = ", error);
-    return "에러가 발생했습니다.";
+    res.status(500).json({ message: "에러가 발생했습니다." });
   }
 }
