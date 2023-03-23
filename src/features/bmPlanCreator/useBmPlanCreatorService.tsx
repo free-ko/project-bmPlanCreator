@@ -1,20 +1,8 @@
 import { useState } from "react";
-import {
-  CreateCompletionRequest,
-  CreateChatCompletionRequest,
-} from "openai/api";
 
 import type { BmPlanCreatorServiceForm } from "./bmPlanCreator.types";
 
-const { Configuration, OpenAIApi } = require("openai");
-
-const configuration = new Configuration({
-  apiKey: process.env.NEXT_PUBLIC_OPEN_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-
-const createPrompt = (data: BmPlanCreatorServiceForm) => {
+export const createPrompt = (data: BmPlanCreatorServiceForm) => {
   const { itemName, itemDescription, nation } = data;
 
   return `
@@ -44,56 +32,32 @@ export const useBMPlanCreatorService = () => {
   const [answerByTurbo, setAnswerByTurbo] = useState("");
   const [answerByDavinci, setAnswerByDavinci] = useState("");
 
-  const getBMPlanByDavinci = async (
+  const getBMPlanByDavinci = (
     data: BmPlanCreatorServiceForm
   ): Promise<string> => {
-    const completionParams: CreateCompletionRequest = {
-      model: "text-davinci-003",
-      max_tokens: 3500,
-      prompt: createPrompt(data),
-    };
+    const response = fetch("api/davinci", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(data),
+    });
 
-    try {
-      const response = await openai.createCompletion(completionParams);
-
-      return response.data.choices[0].text.trim();
-    } catch (error) {
-      console.error("에러가 발생 했습니다. = ", error);
-      return "에러가 발생했습니다.";
-    }
+    return response.then((res) => res.json());
   };
 
   const getBMPlanByTurbo = async (
     data: BmPlanCreatorServiceForm
   ): Promise<string> => {
-    const completionParams: CreateChatCompletionRequest = {
-      model: "gpt-3.5-turbo",
-      max_tokens: 3000,
-      messages: [
-        {
-          role: "system",
-          content: `
-        You are an expert in writing business plans well around the world.
-        You're an expert at writing up a business plan very carefully.
-        You writing up a business plan using figures and indicators well.
-        `,
-        },
-        {
-          role: "user",
-          content: createPrompt(data),
-        },
-        { role: "assistant", content: "Q: " },
-      ],
-    };
+    const response = fetch("api/turbo", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(data),
+    });
 
-    try {
-      const response = await openai.createChatCompletion(completionParams);
-
-      return response.data.choices[0].message.content;
-    } catch (error) {
-      console.error("에러가 발생 했습니다. = ", error);
-      return "에러가 발생했습니다.";
-    }
+    return response.then((res) => res.json());
   };
 
   return {
